@@ -31,7 +31,7 @@ class IssueRow extends React.Component {
         <IssueRow key={issue.id} issue={issue} /> )
     return (
       <table className="bordered-table">
-        <thead style={{color:"green"}}>
+        <thead style={{color:"brxown"}}>
           <tr>
             <th>Id</th>
             <th>Status</th>
@@ -48,13 +48,68 @@ class IssueRow extends React.Component {
   }
 }
 
+class IssueAdd extends React.Component{
+  constructor(){
+    super();
+    this.handleSubmit=this.handleSubmit.bind(this);
+  }
+  handleSubmit(e){
+    e.preventDefault();
+    var form=document.forms.issueAdd;
+    this.props.createIssue(
+      {
+        owner:form.owner.value,
+        title:form.title.value,
+        status:'new',
+        created:new Date(),
+      }
+    )
+    //clear the form in readiness for the next input
+    form.owner.value='';
+    form.title.value='';
+  }
+  render(){
+    return(
+      <div>
+        <form name="issueAdd" onSubmit={this.handleSubmit}x >
+          <input type="text" name="owner" placeholder="Owner"></input>
+          <input type="text" placeholder="Title" name="title"></input>
+          <button>Add</button>
+        </form>
+      </div>
+    )
+  }
+}
 
 class IssueList extends React.Component {
+  constructor(){
+    super();
+    this.state={issues: []};
+
+    this.createIssue = this.createIssue.bind(this);
+    
+  }
+  componentDidMount(){
+    this.loadData();
+  }
+  loadData(){
+    setTimeout(()=>{
+      this.setState({issues:issues})
+    },2000)
+  }
+  createIssue(newIssue){
+    const newIssues=this.state.issues.slice();
+    newIssue.id=this.state.issues.length+1;
+    newIssues.push(newIssue);
+    this.setState({issues:newIssues});
+  }
   render() {
     return (
       <div>
         <h1>Issue Tracker</h1><hr />
-        <IssueTable issues={issues} />
+        <IssueTable issues={this.state.issues} />
+        <hr/>
+        <IssueAdd createIssue={this.createIssue}/>
       </div>
     );
   }
