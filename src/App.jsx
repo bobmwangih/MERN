@@ -6,9 +6,8 @@ const contentNode = document.getElementById('contents');
 // const component = <p>{message}</p>; // A simple JSX component
 // ReactDOM.render(component, contentNode); 
 
-class IssueRow extends React.Component {
-  render() {
-    const issue = this.props.issue;
+const IssueRow=(props)=>{
+    const issue = props.issue;
     return (
       <tr>
         <td>{issue.id}</td>
@@ -22,12 +21,12 @@ class IssueRow extends React.Component {
       </tr>
     )
   }
-}
 
-    class IssueTable extends React.Component {
-      render() {
+
+    function IssueTable(props) {
+      
         //const borderedStyle = { border: "1px solid silver", padding: 7, color: "blue" };
-        const issueRows = this.props.issues.map( issue => 
+        const issueRows = props.issues.map( issue => 
         <IssueRow key={issue.id} issue={issue} /> )
     return (
       <table className="bordered-table">
@@ -46,7 +45,7 @@ class IssueRow extends React.Component {
       </table>
     )
   }
-}
+
 
 class IssueAdd extends React.Component{
   constructor(){
