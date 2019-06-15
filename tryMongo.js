@@ -26,4 +26,73 @@ function usage() {
   usage();
   }
   }
+
+  function testWithCallbacks(){
+    MongoClient.connect('mongodb://localhost/records',function(err,db){
+      db.collection('employess').insertOne({id:1,name:'A.callBack'},function(err,result){
+        console.log("The result of insert is: "+result.insertedId);
+        db.collection('employess').find({id:1}).toArray(function(err,finalResult){
+          console.log('The insertion is: '+ finalResult);
+          db.close();
+        })
+      })
+    })
+  }
+
+  function testWithPromises(){
+    MongoClient.connect('mongodb://localhost/records').then((db)=>{
+      return db.collection('employess').insertOne({id:1,name:'b.promises'})
+    }).then((res)=>{
+      console.log('the result is: ',res.insertedId);
+      return db.collection('employess').find({id:1}).toArray()
+    }).then((finalResult)=>{
+      console.log('the final result is: ',finalResult)
+      db.close()
+    }).catch((err)=>{
+      console.log('Error', err);
+    })
+  }
+
+  function testWithGenerator(){
+    const co= require('co');
+    co(function*(){
+      const db=yield MongoClient.connect('mongodb://localhost/records');
+      const res=yield db.collection('employess').insertOne({id:1,name:'c.generators'});
+      console.log('the inserted is: ',res.insertedId);
+      const finalResult=yield db.collection('employess').find({id:1}).toArray()
+      console.log(finalResult);
+      db.close();
+    }).catch(err=>{
+      console.log(err);
+    })
+  }
+
+  function testWithAsync(){
+    const async =require('async');
+    let db;
+    async.waterfall([
+      next=>{
+        MongoClient.connect('mongodb://localhost/records',next)
+      },
+      (connection,next)=>{
+        db=connection;
+        db.collection('employess').insertOne({id:1,name:'d.async'},next)
+      },
+      (insertResult,next)=>{
+        console.log('inserted result:',insertResult.insertedId)
+        db.collection('employess').find({id:1}).toArray(next)
+      },
+      (docs,next)=>{
+        console.log('Result of find:', docs);
+        db.close();
+        next(null, 'All done');
+        
+      }
+    ], (err, result) => {
+      if (err)
+      console.log('ERROR', err);
+      else
+      console.log(result);
+      })
+  }
     

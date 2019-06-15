@@ -119,7 +119,8 @@ class IssueList extends React.Component {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newIssue),
-        }).then(response => {
+        }
+        ).then(response => {
             if (response.ok) {
                 response.json().then(updatedIssue => {
                     updatedIssue.created = new Date(updatedIssue.created);
