@@ -5,6 +5,9 @@ app.use(express.static('static'));
 const MongoClient = require('mongodb').MongoClient;
 
 app.use(bodyParser.json());
+let db;
+
+
 
 app.post('/api/issues', (req, res) => {
   const newIssue = req.body;
@@ -15,19 +18,19 @@ app.post('/api/issues', (req, res) => {
 issues.push(newIssue);
 res.json(newIssue);
 });
-const issues = [
-  {
-    id: 1, status: 'Open', owner: 'Ravan',
-    created: new Date('2016-08-15'), effort: 5, completionDate: undefined,
-    title: 'Error in console when clicking Add',
-  },
-  {
-    id: 2, status: 'Assigned', owner: 'Eddie',
-    created: new Date('2016-08-16'), effort: 14, 
-completionDate: new Date('2016-08-30'),
-    title: 'Missing bottom border on panel',
-  },
-];
+// const issues = [
+//   {
+//     id: 1, status: 'Open', owner: 'Ravan',
+//     created: new Date('2016-08-15'), effort: 5, completionDate: undefined,
+//     title: 'Error in console when clicking Add',
+//   },
+//   {
+//     id: 2, status: 'Assigned', owner: 'Eddie',
+//     created: new Date('2016-08-16'), effort: 14, 
+// completionDate: new Date('2016-08-30'),
+//     title: 'Missing bottom border on panel',
+//   },
+// ];
 
 const validIssueStatus = {
   New: true,
@@ -73,20 +76,23 @@ app.post('/api/issues', (req, res) => {
   issues.push(newIssue);
   res.json(newIssue);
 });
-app.get('/api/issues', (req, res) => {
-  const metadata = { total_count: issues.length };
-//   MongoClient.connect('mongod://localhost/issuetracker',(err,db)=>{
-// db.collection('issues').find().toArray((err,issueItems)=>{
-//   var items=issueItems;
-//   console.log(items);
-//   db.close();
-// });
-// });
+
+app.get('/api/issues',(req,res)=>{
+  db.collection('issues').find().toArray().then(issues=>{
+    const metadata={issuesNiNgapi:issues.length}
+    res.json({meta:metadata,records:issues})
+  }).catch(error=>{
+    console.log(error);
+    res.status(500).json({message:`internal server error: ${error}`})
+    
+  })
+})
+
+MongoClient.connect('mongodb://localhost/issuetracker').then(client=>{
+  db = client.db();
+  app.listen(3000, () => {
+    console.log('App started on port 3000');
+  });
+}).catch(err=>{console.log(err.message);
+})
  
-
-  res.json({ _metadata: metadata, records: issues });
-
-});
-app.listen(3000, () => {
-  console.log('App started on port 3000');
-});

@@ -31,7 +31,7 @@ var IssueRow = function (_React$Component) {
                 React.createElement(
                     "td",
                     null,
-                    issue.id
+                    issue._id
                 ),
                 React.createElement(
                     "td",
@@ -83,7 +83,7 @@ var IssueTable = function (_React$Component2) {
         key: "render",
         value: function render() {
             var issueRows = this.props.issues.map(function (issue) {
-                return React.createElement(IssueRow, { key: issue.id, issue: issue });
+                return React.createElement(IssueRow, { key: issue._id, issue: issue });
             });
             return React.createElement(
                 "table",
@@ -240,16 +240,22 @@ var IssueList = function (_React$Component5) {
             var _this6 = this;
 
             fetch('/api/issues').then(function (response) {
-                return response.json();
-            }).then(function (data) {
-                console.log("Total count of records:", data._metadata.total_count);
-                data.records.forEach(function (issue) {
-                    issue.created = new Date(issue.created);
-                    if (issue.completionDate) issue.completionDate = new Date(issue.completionDate);
-                });
-                _this6.setState({ issues: data.records });
+                if (response.ok) {
+                    response.json().then(function (data) {
+                        console.log("Total count of records:", data.meta.issuesNiNgapi);
+                        data.records.forEach(function (issue) {
+                            issue.created = new Date(issue.created);
+                            if (issue.completionDate) issue.completionDate = new Date(issue.completionDate);
+                        });
+                        _this6.setState({ issues: data.records });
+                    });
+                } else {
+                    response.json().then(function (error) {
+                        alert("Failed to fetch issues:" + error.message);
+                    });
+                }
             }).catch(function (err) {
-                console.log(err);
+                alert("Error in fetching data from server:", err);
             });
         }
     }, {
