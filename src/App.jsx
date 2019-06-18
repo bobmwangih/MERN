@@ -103,7 +103,7 @@ class IssueList extends React.Component {
         fetch('/api/issues').then(response => {
             if (response.ok) {
                 response.json().then(data => {
-                    console.log("Total count of records:", data.meta.issuesNiNgapi);
+                    console.log("Total count of records:", data. meta.issuesNiNgapi);
                     data.records.forEach(issue => {
                         issue.created = new Date(issue.created);
                         if (issue.completionDate)
