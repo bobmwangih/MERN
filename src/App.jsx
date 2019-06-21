@@ -1,11 +1,5 @@
 const contentNode = document.getElementById("contents");
-import IssueAdd from './IssueAdd.js';
-
-
-
-
-
-
+import IssueAdd from './IssueAdd.jsx';
 
 
 class IssueRow extends React.Component {
@@ -26,9 +20,6 @@ class IssueRow extends React.Component {
         );
     }
 }
-
-
-
 
 class IssueTable extends React.Component {
     render() {
@@ -88,7 +79,7 @@ class IssueList extends React.Component {
                 });
             }
         }).catch(err => {
-            alert("Error in fetching data from server:", err);
+            alert("Error In fetching data from server:", err);
         });
     }
 
